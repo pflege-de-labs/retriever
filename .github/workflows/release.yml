@@ -1,0 +1,19 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    uses: pflege-de-labs/github-workflows/.github/workflows/release-guard.yml@cef33cface64a7ac3c33a5a8aea652095de518f7 # v1.1.0
+  image:
+    needs: guard
+    uses: pflege-de-labs/github-workflows/.github/workflows/image-release.yml@cef33cface64a7ac3c33a5a8aea652095de518f7 # v1.1.0
+    permissions:
+      contents: read
+      packages: write
+      id-token: write

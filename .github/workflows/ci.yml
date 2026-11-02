@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    uses: pflege-de-labs/github-workflows/.github/workflows/image-build.yml@cef33cface64a7ac3c33a5a8aea652095de518f7 # v1.1.0
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
