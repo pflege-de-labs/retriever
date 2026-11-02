@@ -1,4 +1,6 @@
-# Private repos need: kubectl create secret generic gh-token --from-literal=token=<PAT>
+# Private repos need one of (both optional; gh-token wins if set):
+#   kubectl create secret generic gh-token --from-literal=token=<PAT>
+#   kubectl create secret generic gh-app --from-literal=app-id=<app or client ID> --from-file=private-key.pem=<key.pem>
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -35,11 +37,20 @@ spec:
                   key: token
                   # public repos need no token
                   optional: true
+            - name: GH_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gh-app
+                  key: app-id
+                  optional: true
           volumeMounts:
             - name: artifacts
               mountPath: /out
             - name: spec
               mountPath: /config
+            - name: gh-app
+              mountPath: /gh-app
+              readOnly: true
       containers:
         - name: app
           image: ubuntu:24.04
@@ -54,4 +65,8 @@ spec:
           configMap:
             name: artifact-spec
             # without it a missing ConfigMap keeps the pod from starting
+            optional: true
+        - name: gh-app
+          secret:
+            secretName: gh-app
             optional: true

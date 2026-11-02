@@ -45,7 +45,9 @@ The helper reads the list from `/config/artifacts`. Set `SPEC` to use another pa
 
 ## Access to private projects
 
-Public projects need nothing. For private ones, the helper needs a GitHub token that can read the projects on your list.
+Public projects need nothing. For private ones, give the helper one of two kinds of access: a personal token, or a GitHub App. If both are set, the token wins.
+
+### Personal token
 
 Use a **fine-grained personal access token** (GitHub → Settings → Developer settings):
 
@@ -61,7 +63,22 @@ Store the token in Kubernetes:
 kubectl create secret generic gh-token --from-literal=token=<your-token>
 ```
 
-If GitHub refuses access (a missing, wrong or too limited token), the helper stops with an error that names the project, and your app does not start.
+### GitHub App
+
+An app belongs to the organization rather than to a person, and its key does not expire.
+
+1. Create a GitHub App (organization settings → Developer settings → GitHub Apps) with the permission *Contents: Read-only*. It needs no webhook.
+2. Install it on the projects on your list. Projects from several owners need one installation per owner.
+3. Generate a private key for the app and note its app ID (or client ID).
+4. Store both in Kubernetes:
+
+```sh
+kubectl create secret generic gh-app --from-literal=app-id=<app-id> --from-file=private-key.pem=<downloaded-key.pem>
+```
+
+At start the helper uses the key to get a short-lived token from GitHub for each owner on the list.
+
+If GitHub refuses access (missing, wrong or too limited access, or an app that is not installed on a project), the helper stops with an error that names the project, and your app does not start.
 
 ### Download limit without a token
 
