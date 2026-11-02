@@ -16,7 +16,7 @@ get() {
     { echo "error: request failed: $1" >&2; exit 1; }
   case "$code" in
     2??) return ;;
-    401|403) echo "error: HTTP $code for $repo@$tag: GH_TOKEN missing, invalid or without access" >&2 ;;
+    401|403) echo "error: HTTP $code for $repo@$tag: GH_TOKEN missing, invalid or without access (or rate limit hit)" >&2 ;;
     404) echo "error: HTTP 404 for $repo@$tag: not found (private repos need GH_TOKEN)" >&2 ;;
     *) echo "error: HTTP $code for $repo@$tag ($1)" >&2 ;;
   esac
