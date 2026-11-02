@@ -39,16 +39,19 @@ myorg/configs  v1.0.0 *.yaml               /out/conf/
 - Otherwise it is the exact path to save the file as.
 - `*` matches any text, so `*.yaml` grabs every `.yaml` file in that release.
 - Empty lines and lines starting with `#` are ignored.
+- If the list is missing or empty, the helper downloads nothing and your app starts normally.
 
 The helper reads the list from `/config/artifacts`. Set `SPEC` to use another path.
 
 ## Access to private projects
 
-The helper needs a GitHub token that can read the projects on your list. Store it in Kubernetes:
+Public projects need nothing. For private ones, the helper needs a GitHub token that can read the projects on your list. Store it in Kubernetes:
 
 ```sh
 kubectl create secret generic gh-token --from-literal=token=<your-token>
 ```
+
+If GitHub refuses access (a missing, wrong or too limited token), the helper stops with an error that names the project, and your app does not start.
 
 ## Try it
 

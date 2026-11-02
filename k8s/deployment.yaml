@@ -1,4 +1,4 @@
-# Requires: kubectl create secret generic gh-token --from-literal=token=<PAT>
+# Private repos need: kubectl create secret generic gh-token --from-literal=token=<PAT>
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -33,6 +33,8 @@ spec:
                 secretKeyRef:
                   name: gh-token
                   key: token
+                  # public repos need no token
+                  optional: true
           volumeMounts:
             - name: artifacts
               mountPath: /out
@@ -51,3 +53,5 @@ spec:
         - name: spec
           configMap:
             name: artifact-spec
+            # without it a missing ConfigMap keeps the pod from starting
+            optional: true
