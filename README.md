@@ -1,6 +1,6 @@
 <p align="center">
   <!-- placeholder: replace docs/images/logo.png with the real image -->
-  <img src="docs/images/logo.png" alt="retriever logo" width="300">
+  <img src="doc/images/logo.png" alt="retriever logo" width="300">
 </p>
 
 <p align="center"><em>"He is golden, he was born to fetch."</em></p>
