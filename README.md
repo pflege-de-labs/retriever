@@ -53,6 +53,10 @@ kubectl create secret generic gh-token --from-literal=token=<your-token>
 
 If GitHub refuses access (a missing, wrong or too limited token), the helper stops with an error that names the project, and your app does not start.
 
+### Download limit without a token
+
+Without a token, GitHub allows only 60 requests per hour, counted per internet address. All pods in a cluster usually share one address, so they share these 60 requests. Each line of the list uses one request, plus one per downloaded file. When the limit is used up, the helper stops with an error and your app does not start until the hour is over. With a token, the limit is 5,000 requests per hour, so set a token whenever many pods start often, even for public projects.
+
 ## Try it
 
 [`k8s/deployment.yaml`](k8s/deployment.yaml) is a full example: the list, the helper, and a simple Ubuntu app that prints the files it received. Edit the list, then:
