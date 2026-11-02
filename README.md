@@ -39,16 +39,33 @@ myorg/configs  v1.0.0 *.yaml               /out/conf/
 - Otherwise it is the exact path to save the file as.
 - `*` matches any text, so `*.yaml` grabs every `.yaml` file in that release.
 - Empty lines and lines starting with `#` are ignored.
+- If the list is missing or empty, the helper downloads nothing and your app starts normally.
 
 The helper reads the list from `/config/artifacts`. Set `SPEC` to use another path.
 
 ## Access to private projects
 
-The helper needs a GitHub token that can read the projects on your list. Store it in Kubernetes:
+Public projects need nothing. For private ones, the helper needs a GitHub token that can read the projects on your list.
+
+Use a **fine-grained personal access token** (GitHub → Settings → Developer settings):
+
+- **Resource owner:** the account or organization that owns the projects. An organization may have to approve the token first.
+- **Repository access:** only the projects on your list.
+- **Permissions:** *Contents: Read-only*. That is all; release downloads count as contents.
+
+Fine-grained tokens expire. When yours does, downloads from private projects fail, so renew it in time. A classic token with the `repo` scope also works, but it can change every private project you have access to, which is far more than needed.
+
+Store the token in Kubernetes:
 
 ```sh
 kubectl create secret generic gh-token --from-literal=token=<your-token>
 ```
+
+If GitHub refuses access (a missing, wrong or too limited token), the helper stops with an error that names the project, and your app does not start.
+
+### Download limit without a token
+
+Without a token, GitHub allows only 60 requests per hour, counted per internet address. All pods in a cluster usually share one address, so they share these 60 requests. Each line of the list uses one request, plus one per downloaded file. When the limit is used up, the helper stops with an error and your app does not start until the hour is over. With a token, the limit is 5,000 requests per hour, so set a token whenever many pods start often, even for public projects.
 
 ## Try it
 
