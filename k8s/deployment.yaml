@@ -12,20 +12,20 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-fetcher-demo
+  name: retriever-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: release-fetcher-demo
+      app: retriever-demo
   template:
     metadata:
       labels:
-        app: release-fetcher-demo
+        app: retriever-demo
     spec:
       initContainers:
         - name: fetch-artifacts
-          image: release-fetcher:dev
+          image: retriever:dev
           imagePullPolicy: IfNotPresent
           env:
             - name: GH_TOKEN

@@ -1,11 +1,11 @@
 <p align="center">
   <!-- placeholder: replace docs/images/logo.png with the real image -->
-  <img src="docs/images/logo.png" alt="github-release-downloader logo" width="300">
+  <img src="docs/images/logo.png" alt="retriever logo" width="300">
 </p>
 
 <p align="center"><em>"He is golden, he was born to fetch."</em></p>
 
-# github-release-downloader
+# retriever
 
 A small helper that fetches files from GitHub releases, private ones included, and drops them where your app expects them, before your app starts.
 
@@ -62,7 +62,7 @@ kubectl apply -f k8s/deployment.yaml
 ## Building the image
 
 ```sh
-podman build -t release-fetcher:dev .
+podman build -t retriever:dev .
 ```
 
 Pull requests and version tags (like `v1.2.3`) are built automatically and published to `ghcr.io/<owner>/<repo>`.
