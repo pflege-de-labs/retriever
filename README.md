@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="doc/images/logo.png" alt="retriever logo" width="300">
+  <img src="doc/images/logo.jpg" alt="retriever logo" width="300">
 </p>
 
 <p align="center"><em>"He is golden, he was born to fetch."</em></p>
