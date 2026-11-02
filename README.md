@@ -45,7 +45,17 @@ The helper reads the list from `/config/artifacts`. Set `SPEC` to use another pa
 
 ## Access to private projects
 
-Public projects need nothing. For private ones, the helper needs a GitHub token that can read the projects on your list. Store it in Kubernetes:
+Public projects need nothing. For private ones, the helper needs a GitHub token that can read the projects on your list.
+
+Use a **fine-grained personal access token** (GitHub → Settings → Developer settings):
+
+- **Resource owner:** the account or organization that owns the projects. An organization may have to approve the token first.
+- **Repository access:** only the projects on your list.
+- **Permissions:** *Contents: Read-only*. That is all; release downloads count as contents.
+
+Fine-grained tokens expire. When yours does, downloads from private projects fail, so renew it in time. A classic token with the `repo` scope also works, but it can change every private project you have access to, which is far more than needed.
+
+Store the token in Kubernetes:
 
 ```sh
 kubectl create secret generic gh-token --from-literal=token=<your-token>
