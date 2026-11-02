@@ -1,0 +1,53 @@
+# Requires: kubectl create secret generic gh-token --from-literal=token=<PAT>
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: artifact-spec
+data:
+  # <owner/repo> <tag> <asset-glob> <dest>   (dest ending in / = directory)
+  artifacts: |
+    myorg/plugin-a v1.0.0 plugin-a-linux-amd64 /out/bin/plugin-a
+    myorg/configs  v1.0.0 *.yaml               /out/conf/
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-fetcher-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: release-fetcher-demo
+  template:
+    metadata:
+      labels:
+        app: release-fetcher-demo
+    spec:
+      initContainers:
+        - name: fetch-artifacts
+          image: release-fetcher:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gh-token
+                  key: token
+          volumeMounts:
+            - name: artifacts
+              mountPath: /out
+            - name: spec
+              mountPath: /config
+      containers:
+        - name: app
+          image: ubuntu:24.04
+          command: ["/bin/sh", "-c", "ls -lR /opt/artifacts; while true; do sleep 3600; done"]
+          volumeMounts:
+            - name: artifacts
+              mountPath: /opt/artifacts
+      volumes:
+        - name: artifacts
+          emptyDir: {}
+        - name: spec
+          configMap:
+            name: artifact-spec
