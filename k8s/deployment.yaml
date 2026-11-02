@@ -25,7 +25,7 @@ spec:
     spec:
       initContainers:
         - name: fetch-artifacts
-          image: retriever:dev
+          image: ghcr.io/pflege-de-labs/retriever:0.1.0
           imagePullPolicy: IfNotPresent
           env:
             - name: GH_TOKEN
