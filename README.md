@@ -1,5 +1,4 @@
 <p align="center">
-  <!-- placeholder: replace docs/images/logo.png with the real image -->
   <img src="doc/images/logo.png" alt="retriever logo" width="300">
 </p>
 
