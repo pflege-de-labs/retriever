@@ -39,6 +39,7 @@ myorg/configs  v1.0.0 *.yaml               /out/conf/
 - Otherwise it is the exact path to save the file as.
 - `*` matches any text, so `*.yaml` grabs every `.yaml` file in that release.
 - `latest` as release means the newest published release (not drafts or pre-releases), looked up each time the helper runs.
+- `latest-prerelease` means the newest release including pre-releases (still no drafts), so a final release after its release candidates wins too.
 - Empty lines and lines starting with `#` are ignored.
 - If the list is missing or empty, the helper downloads nothing and your app starts normally.
 

@@ -60,9 +60,17 @@ while read -r repo tag pattern dest || [ -n "${repo:-}" ]; do
   echo "fetching $repo@$tag $pattern -> $dest"
   [ -n "${GH_TOKEN:-}" ] || [ -z "${GH_APP_ID:-}" ] || app_auth "$repo"
   ctx=$repo@$tag
-  # latest = newest published release, no drafts or pre-releases
-  case "$tag" in latest) path=latest ;; *) path=tags/$tag ;; esac
-  get "$api/repos/$repo/releases/$path" "$rel" application/vnd.github+json
+  case "$tag" in
+    # newest published release, no drafts or pre-releases
+    latest) get "$api/repos/$repo/releases/latest" "$rel" application/vnd.github+json ;;
+    # newest release including pre-releases; GitHub lists newest first
+    latest-prerelease)
+      get "$api/repos/$repo/releases?per_page=10" "$tmp/releases.json" application/vnd.github+json
+      jq -e 'map(select(.draft | not))[0] // empty' "$tmp/releases.json" >"$rel" ||
+        { echo "error: $repo has no published release" >&2; exit 1; } ;;
+    *) get "$api/repos/$repo/releases/tags/$tag" "$rel" application/vnd.github+json ;;
+  esac
+  echo "using $repo@$(jq -r .tag_name "$rel")"
   # count matches before downloading, so a bad line writes nothing
   jq -r '.assets[] | "\(.url) \(.name)"' "$rel" | while read -r url name; do
     # unquoted on purpose: the pattern is a glob
