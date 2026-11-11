@@ -60,7 +60,9 @@ while read -r repo tag pattern dest || [ -n "${repo:-}" ]; do
   echo "fetching $repo@$tag $pattern -> $dest"
   [ -n "${GH_TOKEN:-}" ] || [ -z "${GH_APP_ID:-}" ] || app_auth "$repo"
   ctx=$repo@$tag
-  get "$api/repos/$repo/releases/tags/$tag" "$rel" application/vnd.github+json
+  # latest = newest published release, no drafts or pre-releases
+  case "$tag" in latest) path=latest ;; *) path=tags/$tag ;; esac
+  get "$api/repos/$repo/releases/$path" "$rel" application/vnd.github+json
   # count matches before downloading, so a bad line writes nothing
   jq -r '.assets[] | "\(.url) \(.name)"' "$rel" | while read -r url name; do
     # unquoted on purpose: the pattern is a glob
