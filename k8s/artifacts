@@ -1,0 +1,3 @@
+# <owner/repo> <tag> <asset-glob> <dest>   (dest ending in / = directory)
+myorg/plugin-a v1.0.0 plugin-a-linux-amd64 /out/bin/plugin-a
+myorg/configs  v1.0.0 *.yaml               /out/conf/
