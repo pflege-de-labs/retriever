@@ -88,11 +88,20 @@ Without a token, GitHub allows only 60 requests per hour, counted per internet a
 
 ## Try it
 
-[`k8s/deployment.yaml`](k8s/deployment.yaml) is a full example: the list, the helper, and a simple Ubuntu app that prints the files it received. Edit the list, then:
+[`k8s/`](k8s) is a full example: the list in [`k8s/artifacts`](k8s/artifacts), and in [`k8s/deployment.yaml`](k8s/deployment.yaml) the helper plus a simple Ubuntu app that prints the files it received. Edit the list, then:
 
 ```sh
-kubectl apply -f k8s/deployment.yaml
+kubectl apply -k k8s
 ```
+
+## Getting new releases
+
+The helper only runs when a pod starts, so new files arrive only with a new pod.
+
+- **Pinned releases** (like `v1.0.0`): change the release in the list and apply again. [`k8s/kustomization.yaml`](k8s/kustomization.yaml) builds the ConfigMap with a name that changes whenever the list changes, so Kubernetes replaces the pods. A new pod has to finish its downloads before an old one stops, so a failed download leaves the running app alone.
+- **`latest` and `latest-prerelease`:** nothing in the list changes, so start new pods yourself: `kubectl rollout restart deployment/retriever-demo`.
+
+[Renovate](https://docs.renovatebot.com/) can open a pull request for each new release of a pinned line. Copy the `customManagers` entry from [`renovate.json`](renovate.json) into the Renovate config of the project that holds your list. It skips `latest` lines. For private projects, Renovate itself needs read access to them.
 
 ## Building the image
 

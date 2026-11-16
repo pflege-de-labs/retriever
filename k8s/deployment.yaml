@@ -1,16 +1,6 @@
 # Private repos need one of (both optional; gh-token wins if set):
 #   kubectl create secret generic gh-token --from-literal=token=<PAT>
 #   kubectl create secret generic gh-app --from-literal=app-id=<app or client ID> --from-file=private-key.pem=<key.pem>
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: artifact-spec
-data:
-  # <owner/repo> <tag> <asset-glob> <dest>   (dest ending in / = directory)
-  artifacts: |
-    myorg/plugin-a v1.0.0 plugin-a-linux-amd64 /out/bin/plugin-a
-    myorg/configs  v1.0.0 *.yaml               /out/conf/
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
